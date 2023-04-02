@@ -136,17 +136,21 @@ const game = () => {
   const _playerOne = playerFactory('Justin', 'X');
   const _playerTwo = playerFactory('Dustin', 'O');
   const board = gameBoard();
+  const gameOverDiv = document.getElementById('div-game-over-message');
+  const currentPlayerTurn = document.getElementById('div-current-player-turn');
   // Compute random number, either 0 or 1 for which player will go first.
   const randomNumber = (Math.floor(Math.random() * (1 - 0 + 1)) + 0 === 0) ? 0 : 1;
   let playersTurn = (randomNumber === 0) ? _playerOne : _playerTwo;
   
   const switchTurns = () => {
     playersTurn = (playersTurn === _playerOne) ? _playerTwo : _playerOne;
+    currentPlayerTurn.innerHTML = `${playersTurn._name} turn!`;
   }
 
   const roundStart = () => {
     // Prompt user to pick a spot.
     console.log(`${playersTurn._name}'s turn. Choose a spot to place your marker.`);
+    currentPlayerTurn.innerHTML = `${playersTurn._name} turn!`;
     // board.updateBoard(`${playersTurn._marker}`, '0 1');
   };
 
@@ -162,7 +166,9 @@ const game = () => {
     placeMarker(stringPos);
 
     if (board.gameOver() === true) {
-      console.log(`${playersTurn._name} wins!`);
+      gameOverDiv.innerHTML = `${playersTurn._name} wins!`;
+      gameOverDiv.classList.remove('hide');
+      currentPlayerTurn.classList.add('hide');
     } else {
       switchTurns();
       roundStart();
