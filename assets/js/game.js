@@ -22,7 +22,7 @@ const playerFactory = (name, marker) => {
 }
 
 const gameBoard = () => {
-  const _board = ['', '', '', '', '', '', '', '', ''];
+  let _board = ['', '', '', '', '', '', '', '', ''];
 
   const displayBoard = () => {
     // Display board on browser.
@@ -38,6 +38,10 @@ const gameBoard = () => {
 
     spanGameTile.innerHTML = marker;
     console.log(_board);
+  }
+
+  const resetBoard = () => {
+    _board = ['', '', '', '', '', '', '', '', ''];
   }
 
   const gameOver = () => {
@@ -128,54 +132,84 @@ const gameBoard = () => {
     return false;
   }
 
-  return { displayBoard, updateBoard, gameOver };
+  return { displayBoard, updateBoard, resetBoard, gameOver };
 };
 
 const game = () => {
-  // Create Instances of two players, and a board.
   const _playerOne = playerFactory('Justin', 'X');
   const _playerTwo = playerFactory('Dustin', 'O');
   const board = gameBoard();
+  const btnPlayAgain = document.getElementById('btn-play-again');
   const gameOverDiv = document.getElementById('div-game-over-message');
   const currentPlayerTurn = document.getElementById('div-current-player-turn');
-  // Compute random number, either 0 or 1 for which player will go first.
-  const randomNumber = (Math.floor(Math.random() * (1 - 0 + 1)) + 0 === 0) ? 0 : 1;
-  let playersTurn = (randomNumber === 0) ? _playerOne : _playerTwo;
-  
+  let playersTurn;
+
+
+  // private methods for game object
   const switchTurns = () => {
     playersTurn = (playersTurn === _playerOne) ? _playerTwo : _playerOne;
     currentPlayerTurn.innerHTML = `${playersTurn._name} turn!`;
   }
 
-  const roundStart = () => {
-    // Prompt user to pick a spot.
-    console.log(`${playersTurn._name}'s turn. Choose a spot to place your marker.`);
-    currentPlayerTurn.innerHTML = `${playersTurn._name} turn!`;
-    // board.updateBoard(`${playersTurn._marker}`, '0 1');
-  };
+  const randomizeCurrentTurn = () => {
+    // Compute random number, either 0 or 1 for which player will go first.
+    const randomNumber = (Math.floor(Math.random() * (1 - 0 + 1)) + 0 === 0) ? 0 : 1;
+    playersTurn = (randomNumber === 0) ? _playerOne : _playerTwo;
+  }
 
-  const displayErrorMessage = () => {
-    console.log('User choice is invalid, choose again.');
+  const setCurrentPlayer = () => {
+    // Prompt user to pick a spot.
+    currentPlayerTurn.innerHTML = `${playersTurn._name} turn!`;
   }
 
   const placeMarker = (stringPos) => {
     board.updateBoard(playersTurn._marker, stringPos)
   }
 
+  // Public Methods for game object
+  const gameStart = () => {
+    randomizeCurrentTurn();
+    setCurrentPlayer();
+  }
+
+  const displayErrorMessage = () => {
+    console.log('User choice is invalid, choose again.');
+  }
+
   const computeTurn = (stringPos) => {
     placeMarker(stringPos);
 
     if (board.gameOver() === true) {
+      // Game is over, unhide game over div to show game over message.
       gameOverDiv.innerHTML = `${playersTurn._name} wins!`;
       gameOverDiv.classList.remove('hide');
+
+      // Hide whose turn it is.
       currentPlayerTurn.classList.add('hide');
+      // Unhide play again button.
+      btnPlayAgain.classList.remove('hide');
     } else {
       switchTurns();
-      roundStart();
+      setCurrentPlayer();
     }
   }
 
-  return { roundStart, displayErrorMessage, computeTurn };
+  const resetGame = () => {
+    // Reset Game Function
+    // reset board array
+    board.resetBoard();
+    // Hide Play Again button
+    btnPlayAgain.classList.add('hide');
+    // Hide Game Over Div
+    gameOverDiv.classList.add('hide');
+    // Randomize player turn
+    randomizeCurrentTurn();
+    setCurrentPlayer();
+    // Unhide player turn div
+    currentPlayerTurn.classList.remove('hide');
+  }
+
+  return { gameStart, displayErrorMessage, computeTurn, resetGame };
 }
 
 const setTileListeners = (gameState) => {
@@ -197,9 +231,23 @@ const setTileListeners = (gameState) => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  const btnPlayAgain = document.getElementById('btn-play-again');
   const gameState = game();
 
   setTileListeners(gameState);
 
-  gameState.roundStart();
+   // Btn Game Over Event Listener
+   btnPlayAgain.addEventListener('click', (e) => {
+    e.preventDefault();
+    const spanTiles = document.getElementsByClassName('game-tile');
+    
+    gameState.resetGame();
+
+    for (let i = 0; i < spanTiles.length; i++) {
+      const spanTile = spanTiles[i];
+      spanTile.innerHTML = '';
+    }
+  });
+
+  gameState.gameStart();
 });
