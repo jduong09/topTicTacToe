@@ -1,25 +1,62 @@
+body {
+  font-family: 'Noto Serif', serif;
+}
+
 .hide {
   display: none !important;
 }
 
 main {
   padding: 2rem;
+  text-align: center;
 }
 
 h1 {
   margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: hsl(0, 100%, 27%);
 }
 
 #div-game-board {
+  width: fit-content;
+  margin: 0 auto 1rem auto;
   display: grid;
-  grid-template-columns: repeat(3, 20px);
-  grid-template-rows: repeat(3, 20px);
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(3, 32px);
+  grid-template-rows: repeat(3, 32px);
+  justify-content: center;
+  border: .5px solid hsl(0, 100%, 27%);
 }
 
 .game-tile {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: .5px solid hsl(0, 100%, 27%);
+}
+
+#btn-play-again {
   display: block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid black;
+  padding: .5rem 1rem;
+  margin: 0 auto 1rem auto;
+  font-weight: 700;
+  color: hsl(0, 0%, 100%);
+  background-color: hsl(0, 100%, 27%);
+  border: 2px solid hsl(0, 100%, 27%);
+  border-radius: 500px;
+}
+
+
+/* Active States */
+#btn-play-again:hover {
+  color: hsl(0, 100%, 27%);
+  background-color: hsl(0, 0%, 100%);
+  cursor: pointer;
+}
+
+/* Game Over CSS */
+#div-game-board.game-over > .game-tile {
+  pointer-events: none;
 }

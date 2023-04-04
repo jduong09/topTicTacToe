@@ -1,8 +1,4 @@
 /*
-  1. Game object needs two players, it needs a board object.
-  2. Needs a variable to know whose turn it is.
-  
-
   Game Walkthrough
   Game decides who will go first, either player 1 or player 2.
   Game console.logs whose turn it is.
@@ -24,10 +20,12 @@ const playerFactory = (name, marker) => {
 const gameBoard = () => {
   let _board = ['', '', '', '', '', '', '', '', ''];
 
+  /*
   const displayBoard = () => {
     // Display board on browser.
     console.log(_board);
   }
+  */
 
   const updateBoard = (marker, location) => {
     // Place player marker on board
@@ -37,7 +35,6 @@ const gameBoard = () => {
     _board[arraySplitLocation[0] * 3 + arraySplitLocation[1]] = marker;
 
     spanGameTile.innerHTML = marker;
-    console.log(_board);
   }
 
   const resetBoard = () => {
@@ -132,13 +129,14 @@ const gameBoard = () => {
     return false;
   }
 
-  return { displayBoard, updateBoard, resetBoard, gameOver };
+  return { updateBoard, resetBoard, gameOver };
 };
 
 const game = () => {
   const _playerOne = playerFactory('Justin', 'X');
   const _playerTwo = playerFactory('Dustin', 'O');
   const board = gameBoard();
+  const divGameBoard = document.getElementById('div-game-board');
   const btnPlayAgain = document.getElementById('btn-play-again');
   const gameOverDiv = document.getElementById('div-game-over-message');
   const currentPlayerTurn = document.getElementById('div-current-player-turn');
@@ -148,7 +146,7 @@ const game = () => {
   // private methods for game object
   const switchTurns = () => {
     playersTurn = (playersTurn === _playerOne) ? _playerTwo : _playerOne;
-    currentPlayerTurn.innerHTML = `${playersTurn._name} turn!`;
+    setCurrentPlayer(playersTurn._name);
   }
 
   const randomizeCurrentTurn = () => {
@@ -157,9 +155,9 @@ const game = () => {
     playersTurn = (randomNumber === 0) ? _playerOne : _playerTwo;
   }
 
-  const setCurrentPlayer = () => {
+  const setCurrentPlayer = (player) => {
     // Prompt user to pick a spot.
-    currentPlayerTurn.innerHTML = `${playersTurn._name} turn!`;
+    currentPlayerTurn.innerHTML = `${player._name}'s turn!`;
   }
 
   const placeMarker = (stringPos) => {
@@ -169,7 +167,7 @@ const game = () => {
   // Public Methods for game object
   const gameStart = () => {
     randomizeCurrentTurn();
-    setCurrentPlayer();
+    setCurrentPlayer(playersTurn);
   }
 
   const displayErrorMessage = () => {
@@ -180,6 +178,8 @@ const game = () => {
     placeMarker(stringPos);
 
     if (board.gameOver() === true) {
+      // Make board items unclickable.
+      divGameBoard.classList.add('game-over');
       // Game is over, unhide game over div to show game over message.
       gameOverDiv.innerHTML = `${playersTurn._name} wins!`;
       gameOverDiv.classList.remove('hide');
@@ -190,7 +190,7 @@ const game = () => {
       btnPlayAgain.classList.remove('hide');
     } else {
       switchTurns();
-      setCurrentPlayer();
+      setCurrentPlayer(playersTurn);
     }
   }
 
@@ -204,7 +204,7 @@ const game = () => {
     gameOverDiv.classList.add('hide');
     // Randomize player turn
     randomizeCurrentTurn();
-    setCurrentPlayer();
+    setCurrentPlayer(playersTurn);
     // Unhide player turn div
     currentPlayerTurn.classList.remove('hide');
   }
