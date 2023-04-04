@@ -1,15 +1,3 @@
-/*
-  Game Walkthrough
-  Game decides who will go first, either player 1 or player 2.
-  Game console.logs whose turn it is.
-  User selects spot on board to place marker.
-  Game checks if spot is valid.
-  If spot is valid, game updates board.
-  If spot is invalid, game does nothing but notifies that user's input is incorrect.
-  After updating board, game checks if game is over.
-  If game is not over, then game ends round and goes to next turn.
-*/
-
 const playerFactory = (name, marker) => {
   const _name = name;
   const _marker = marker;
@@ -19,13 +7,6 @@ const playerFactory = (name, marker) => {
 
 const gameBoard = () => {
   let _board = ['', '', '', '', '', '', '', '', ''];
-
-  /*
-  const displayBoard = () => {
-    // Display board on browser.
-    console.log(_board);
-  }
-  */
 
   const updateBoard = (marker, location) => {
     // Place player marker on board
@@ -41,13 +22,8 @@ const gameBoard = () => {
     _board = ['', '', '', '', '', '', '', '', ''];
   }
 
-  const gameOver = () => {
-    /*
-    [] [] []
-    [] [] []
-    [] [] []
-    */
-    // function to check if game is over.
+  const gameOver = (currentPlayerTurn) => {
+    // for loop to check if game has a winner.
     for (let i = 0; i < _board.length; i++) {
       const marker = _board[i];
       if (marker === '') {
@@ -56,76 +32,79 @@ const gameBoard = () => {
 
       if (i === 0) {
         if (_board[1] === marker && _board[2] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[3] === marker && _board[6] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[4] === marker && _board[8] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 1) {
         if (_board[0] === marker && _board[2] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[4] === marker && _board[7] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 2) {
         if (_board[0] === marker && _board[1] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[4] === marker && _board[6] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[5] === marker && _board[7] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 3) {
         if (_board[0] === marker && _board[6] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[4] === marker && _board[5] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 4) {
         if (_board[0] === marker && _board[8] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[1] === marker && _board[7] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[2] === marker && _board[6] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[3] === marker && _board[5] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 5) {
         if (_board[2] === marker && _board[8] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[3] === marker && _board[4] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 6) {
         if (_board[0] === marker && _board[3] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[4] === marker && _board[2] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[7] === marker && _board[8] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 7) {
         if (_board[6] === marker && _board[8] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[1] === marker && _board[4] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       } else if (i === 8) {
         if (_board[0] === marker && _board[4] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[2] === marker && _board[5] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         } else if (_board[6] === marker && _board[7] === marker) {
-          return true;
+          return `${currentPlayerTurn._name} wins!`;
         }
       }
     }
+    // Check if board is completely filled up. DRAW, end of game.
+    for (let j = 0; j < _board.length; j++) {
+      if (j === 8 && _board[j] !== '') return 'Game Draw!';
 
-    // Check if board is completely filled up.
-   
-
+      if (_board[j] === '') break;
+    }
+    // If there is not a winner and we have reached this line of code, return false and game continues.
     return false;
   }
 
@@ -140,8 +119,8 @@ const game = () => {
   const btnPlayAgain = document.getElementById('btn-play-again');
   const gameOverDiv = document.getElementById('div-game-over-message');
   const currentPlayerTurn = document.getElementById('div-current-player-turn');
+  const divErrorMessage = document.getElementById('div-error-message');
   let playersTurn;
-
 
   // private methods for game object
   const switchTurns = () => {
@@ -161,7 +140,7 @@ const game = () => {
   }
 
   const placeMarker = (stringPos) => {
-    board.updateBoard(playersTurn._marker, stringPos)
+    board.updateBoard(playersTurn._marker, stringPos);
   }
 
   // Public Methods for game object
@@ -171,17 +150,18 @@ const game = () => {
   }
 
   const displayErrorMessage = () => {
-    console.log('User choice is invalid, choose again.');
+    divErrorMessage.classList.remove('hide');
   }
 
   const computeTurn = (stringPos) => {
     placeMarker(stringPos);
 
-    if (board.gameOver() === true) {
+    const gameOver = board.gameOver(playersTurn);
+    if (gameOver) {
       // Make board items unclickable.
       divGameBoard.classList.add('game-over');
       // Game is over, unhide game over div to show game over message.
-      gameOverDiv.innerHTML = `${playersTurn._name} wins!`;
+      gameOverDiv.innerHTML = `${gameOver}`;
       gameOverDiv.classList.remove('hide');
 
       // Hide whose turn it is.
@@ -196,8 +176,10 @@ const game = () => {
 
   const resetGame = () => {
     // Reset Game Function
-    // reset board array
+    // Reset board array
     board.resetBoard();
+    // Remove game-over class to allower pointer events to work
+    divGameBoard.classList.remove('game-over');
     // Hide Play Again button
     btnPlayAgain.classList.add('hide');
     // Hide Game Over Div
@@ -214,6 +196,7 @@ const game = () => {
 
 const setTileListeners = (gameState) => {
   const spanTiles = document.getElementsByClassName('game-tile');
+  const divErrorMessage = document.getElementById('div-error-message');
 
   for (let i = 0; i < spanTiles.length; i++) {
     const spanTile = spanTiles[i];
@@ -225,6 +208,10 @@ const setTileListeners = (gameState) => {
         gameState.displayErrorMessage();
       } else {
         gameState.computeTurn(e.currentTarget.getAttribute('data-pos'));
+
+        if (!divErrorMessage.classList.contains('hide')) {
+          divErrorMessage.classList.add('hide');
+        }
       }
     });
   }
@@ -236,8 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setTileListeners(gameState);
 
-   // Btn Game Over Event Listener
-   btnPlayAgain.addEventListener('click', (e) => {
+  // Btn Game Over Event Listener
+  btnPlayAgain.addEventListener('click', (e) => {
     e.preventDefault();
     const spanTiles = document.getElementsByClassName('game-tile');
     
